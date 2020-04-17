@@ -33,6 +33,7 @@ var Rotation = require('./rotation');
  */
 function GrantManager (config) {
   this.realmUrl = config.realmUrl;
+  this.realmIpUrl = config.realmIpUrl;
   this.clientId = config.clientId;
   this.secret = config.secret;
   this.publicKey = config.publicKey;
@@ -57,7 +58,7 @@ function GrantManager (config) {
  * @param {Function} callback Optional callback, if not using promises.
  */
 GrantManager.prototype.obtainDirectly = function obtainDirectly (username, password,
-  callback, scopeParam) {
+  callback, scopeParam, headers) {
   const params = {
     client_id: this.clientId,
     username: username,
@@ -66,7 +67,7 @@ GrantManager.prototype.obtainDirectly = function obtainDirectly (username, passw
     scope: scopeParam || 'openid'
   };
   const handler = createHandler(this);
-  const options = postOptions(this);
+  const options = postOptions(this, null, headers);
   return nodeify(fetch(this, handler, options, params), callback);
 };
 
@@ -491,13 +492,15 @@ const validationHandler = (manager, token) => (resolve, reject, json) => {
   else resolve(token);
 };
 
-const postOptions = (manager, path) => {
+const postOptions = (manager, path, headers) => {
   const realPath = path || '/protocol/openid-connect/token';
-  const opts = URL.parse(manager.realmUrl + realPath);
+  const url = manager.realmIpUrl || manager.realmUrl;
+  const opts = URL.parse(url + realPath);
   opts.headers = {
     'Content-Type': 'application/x-www-form-urlencoded',
     'X-Client': 'keycloak-nodejs-connect'
   };
+  opts.headers = Object.assign(headers || {}, opts.headers);
   if (!manager.public) {
     opts.headers.Authorization = 'Basic ' + Buffer.from(manager.clientId + ':' + manager.secret).toString('base64');
   }

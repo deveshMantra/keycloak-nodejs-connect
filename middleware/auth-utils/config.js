@@ -101,6 +101,12 @@ Config.prototype.configure = function configure (config) {
   this.realm = resolveValue(config.realm || config.realm);
 
   /**
+   * tokenGenerationUrl: Generate token using IP
+   * @type {String}
+   */
+  this.tokenGenerationUrl = resolveValue(config['token-generation-url'] || config['auth-server-url'] || config['server-url'] || config.serverUrl || config.authServerUrl);
+
+  /**
    * Client/Application ID
    * @type {String}
    */
@@ -129,6 +135,13 @@ Config.prototype.configure = function configure (config) {
    * @type {String}
    */
   this.realmUrl = this.authServerUrl + '/realms/' + this.realm;
+
+
+  /**
+   * Generation realm Url using IP
+   * @type {string}
+   */
+  this.realmIpUrl = this.tokenGenerationUrl + '/realms/' + this.realm;
 
   /**
    * Root realm admin URL.
