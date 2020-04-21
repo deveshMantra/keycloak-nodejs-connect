@@ -378,11 +378,12 @@ GrantManager.prototype.validateGrant = function validateGrant (grant) {
   const validateGrantToken = (grant, tokenName, expectedType) => {
     return new Promise((resolve, reject) => {
     // check the access token
-      console.log('grantmanager: validateGrant', JSON.stringify(grant));
+      console.log('grantmanager: validateGrant', grant);
       this.validateToken(grant[tokenName], expectedType).then(token => {
         grant[tokenName] = token;
         resolve();
       }).catch((err) => {
+        console.log('GrantManager:validateGrant err', err);
         reject(new Error('Grant validation failed. Reason: ' + err.message));
       });
     });
@@ -420,7 +421,7 @@ GrantManager.prototype.validateGrant = function validateGrant (grant) {
  * @return {Promise} That resolve a token
  */
 GrantManager.prototype.validateToken = function validateToken (token, expectedType) {
-  console.log('grantmanager: validateToken', JSON.stringify(token));
+  console.log('grantmanager: validateToken', token);
   return new Promise((resolve, reject) => {
     if (!token) {
       reject(new Error('invalid token (missing)'));
