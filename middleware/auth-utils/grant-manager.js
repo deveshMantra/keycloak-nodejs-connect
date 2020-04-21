@@ -68,6 +68,7 @@ GrantManager.prototype.obtainDirectly = function obtainDirectly (username, passw
   };
   const handler = createHandler(this);
   const options = postOptions(this, null, headers);
+  console.log('GrantManager:obtainDirectly options', options);
   return nodeify(fetch(this, handler, options, params), callback);
 };
 
